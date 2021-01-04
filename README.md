@@ -16,7 +16,11 @@ You need to install `geckodriver` that controls Firefox browser by running the f
 `driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())`
 
 # Setup
-After installing the requirements do `make setup`. 
+After installing the requirements do `make setup`.
+
+For flask, you need the following env variables:
+`export FLASK_APP=flaskr`
+`export FLASK_ENV=development` 
 
 # Run
 `python Radar.py` to run it with the test data.
