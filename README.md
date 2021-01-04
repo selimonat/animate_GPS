@@ -4,6 +4,7 @@ This is an experimental code that generates radar maps of data in a GPS file usi
 PNGs using Selenium WebDriver (a.k.a. Selenium 2). For each snapshot this code will fire a browser window in
 parallel and save images.
 
+![Example](https://github.com/selimonat/animate_GPS/blob/main/data/out.gif)
 
 # Requirements:
 Install `Poetry` and `Firefox`. For Mac, you can `brew cask install firefox`.
