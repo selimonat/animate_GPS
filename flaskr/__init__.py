@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 
 from Radar import RadarView
 import os
@@ -38,6 +38,12 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    @app.route('/')
+    def landing_page():
+
+        return "This is your landing page and you can upload a file from <a href=http://localhost:5000" + url_for(
+            'upload_file') + "> here </a>"
 
     @app.route('/upload')
     def upload_file():
