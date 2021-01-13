@@ -68,6 +68,9 @@ def create_app(test_config=None):
 
             return 'file uploaded successfully'
 
+    from . import db
+    db.init_app(app)
+
     return app
 
 if __name__ == '__main__':
