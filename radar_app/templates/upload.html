@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.min.js"></script>
+<script>
+   $(document).ready(function(){
+    //connect to the socket server.
+    var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    var numbers_received = [];
+
+    //receive details from server
+    socket.on('thread_function', function(msg) {
+        console.log("Received number" + msg.step);
+        //maintain a list of ten numbers
+        $('#log').html(msg.step);
+    });
+    });
+</script>
+
+
+<body>
+      <form action = "http://localhost:5000/uploader" method = "POST"  enctype = "multipart/form-data">
+         <label for = "gps_file"> Your GPS file </label>
+         <input type = "file" id = "gps_file" name = "file" />
+         <input type = "submit" />
+      </form>
+
+   <div class="container" id="content">
+       <div class="row">
+           <p>Asynchronous page updates will appear here:</p>
+           <div id="log" style="font-size:150px">
+           </div>
+       </div>
+   </div>
+
+</body>
+</html>
