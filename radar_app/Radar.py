@@ -11,9 +11,15 @@ from joblib import Parallel, delayed
 import logging
 
 from selenium import webdriver
+from selenium.webdriver.remote.remote_connection import LOGGER
+from urllib3.connectionpool import log as urlliblogger
 import subprocess
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+# Set the threshold for selenium to WARNING
+LOGGER.setLevel(logging.WARNING)
+# Set the threshold for urllib3 to WARNING
+urlliblogger.setLevel(logging.WARNING)
 
 
 class RadarView:
@@ -71,7 +77,11 @@ class RadarView:
         logging.info(f"Converting {html_file} to PNG file.")
         delay = 3
         png_file = os.path.join(self.png_folder, os.path.basename(html_file) + ".png")
-        browser = webdriver.Firefox()
+
+        # firefox_options = webdriver.FirefoxOptions()
+        # firefox_options.set_headless()
+
+        browser = webdriver.Firefox(log_path="./firefox.log")
         browser.get(f"file://" + html_file)
         # Give the map tiles some time to load
         time.sleep(delay)
@@ -85,12 +95,15 @@ class RadarView:
         )
 
     def get_video(self):
-        cmd = ["ffmpeg", "-y", "-framerate", "25", "-pattern_type", "glob", "-i", os.path.join(self.png_folder,'*.png'), "-c:v", "libx264", "-r", "30",
+        logging.info("Creating video.")
+        cmd = ["ffmpeg","-loglevel","quiet", "-y", "-framerate", "25", "-pattern_type", "glob", "-i", os.path.join(
+            self.png_folder,'*.png'), "-c:v", "libx264", "-r", "30",
                "-pix_fmt", "yuv420p", self.gpx_file + ".mp4"]
         process = subprocess.call(cmd,stdout=subprocess.PIPE, universal_newlines=True)
         return process
 
-if __name__ in "__main__":
+
+if __name__ is "__main__":
 
     r = RadarView("./test/test_data/test.gpx")
     r.save_radar_html()

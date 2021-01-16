@@ -1,10 +1,8 @@
 from flask import Flask, render_template, request, url_for
 
-from Radar.Radar import RadarView
+from Radar import RadarView
 import os
 import logging
-import threading
-import numpy as np
 from flask_socketio import SocketIO, emit
 import db
 from threading import Thread, Event
@@ -39,21 +37,24 @@ except OSError:
     pass
 
 # turn the flask app into a socketio app
-socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
+socketio = SocketIO(app, async_mode="eventlet", logger=False, engineio_logger=False)
 
 
 def thread_function(filename):
-    logging.info('Inside thread_function')
-    r = RadarView(filename)
-    socketio.emit('thread_function', {'step': 0}, namespace='/test')
-    r.save_radar_html()
-    socketio.emit('thread_function', {'step': 1}, namespace='/test')
-    r.get_frames()
-    socketio.emit('thread_function', {'step': 2}, namespace='/test')
-    r.get_video()
-    socketio.emit('thread_function', {'step': 3}, namespace='/test')
-    socketio.emit('thread_function', {'step': "<a href=http://localhost:5000>bla</a>"}, namespace='/test')
-
+    try:
+        logging.info('Inside thread_function')
+        socketio.emit('thread_function', {'progress': "Thread function starting"}, namespace='/test')
+        r = RadarView(filename)
+        socketio.emit('thread_function', {'progress': "Radar object inited."}, namespace='/test')
+        r.save_radar_html()
+        socketio.emit('thread_function', {'progress': "HTML files saved."}, namespace='/test')
+        r.get_frames()
+        socketio.emit('thread_function', {'progress': "PNGs are saved."}, namespace='/test')
+        r.get_video()
+        socketio.emit('thread_function', {'progress': "Video converted."}, namespace='/test')
+        socketio.emit('thread_function', {'progress': "<a href=http://localhost:5000>bla</a>"}, namespace='/test')
+    except:
+        socketio.emit('thread_function', {'progress': "Something went wrong."}, namespace='/test')
 
 
 @app.route('/')
@@ -97,4 +98,4 @@ def test_connect():
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app,debug=True)
