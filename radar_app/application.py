@@ -20,7 +20,6 @@ import os
 from flask_socketio import SocketIO, emit
 from flask import Flask, render_template, request
 from random import random
-from time import sleep
 from threading import Thread, Event
 
 __author__ = 'selim'
@@ -59,6 +58,7 @@ def index():
 
 @app.route('/uploader', methods=['POST'])
 def uploader():
+    # need visibility of the global thread object
     global thread
     if request.method == 'POST':
         f = request.files['file']
@@ -81,8 +81,6 @@ def uploader():
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    # need visibility of the global thread object
-    # global thread
     print('Client connected.')
     socketio.emit('progress_report', {'main': "Waiting for upload..."}, namespace='/test')
 
